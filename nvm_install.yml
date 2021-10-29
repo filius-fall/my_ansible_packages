@@ -1,0 +1,43 @@
+---
+
+- name: Install NVM
+  hosts: test_2
+
+  tasks:
+    # - name: Install dependecies
+    #   apt:
+    #     - build-essential
+    #     - libssl-dev
+    
+    # - name: Install nvm
+    #     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+    #     args:
+    #       creates: "/.nvm/nvm"
+
+    - name: Install NVM    
+      block:
+      - name: install curl
+        apt:
+          name: curl
+          state: latest
+
+      - name: Download NVM
+        # become: true
+        shell: curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh > /tmp/install-nvm.sh 
+
+      - name: Make sh file Executable
+        # become: true
+        become_user: root
+        file:
+          path: /tmp/install-nvm.sh
+          mode: +x
+
+      - name: Install NVM
+        # become: true
+        become_user: vagrant
+        command: sh /tmp/install-nvm.sh -y 
+      
+      - name: Remove sh file
+        file:
+          path: /tmp/install-nvm.sh
+          state: absent

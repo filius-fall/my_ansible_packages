@@ -1,0 +1,37 @@
+- name: Insttall fish
+  hosts: test_app
+
+  tasks:
+    - name: Download deb file
+      get_url:
+        url: https://launchpad.net/~fish-shell/+archive/ubuntu/release-3/+build/21757276/+files/fish-dbg_3.3.1-1~focal_amd64.deb
+        dest: /tmp/fish.deb
+        mode: +rwx
+    
+    - name: fish repo
+      apt_repository:
+        repo: ppa:fish-shell/release-3
+        state: present
+    - name: Update ubuntu cache
+      apt:
+        update_cache: true
+        cache_valid_time: 7200
+
+    - name: fix packeges
+      become: true
+      command: apt --fix-broken install -y
+    
+    - name: test
+      apt:
+        name: fish-common
+        state: latest
+
+    - name: Install FIsh
+      become: true
+      become_user: root
+      command: chdir=/tmp/ dpkg -i fish.deb
+
+    - name: remove deb file
+      file:
+        path: /tmp/fish.deb
+        state: absent

@@ -1,0 +1,59 @@
+---
+- name: TMUX Installation
+  hosts: test_2
+  vars:
+    github_url: https://github.com/tmux/tmux.git
+
+  tasks:
+    - name: Install git
+      become: true
+      apt:
+        name:
+          - git
+          - autotools-dev
+          - automake
+          - build-essential
+          - pkg-config
+          - libevent-dev
+          - libncurses-dev
+          - bison
+        state: present
+
+    - name: Download TMUX from github
+      git:
+        repo: "{{ github_url }}"
+        dest: /usr/filius/tmux
+        clone: yes
+        force: yes
+      
+    # - name: change DIR to tmux
+    #   shell:
+    #     chdir: /usr/filius/tmux
+    - name: make execcutable file
+      # become: True
+      # becomoe_user: root
+      file:
+        path: /usr/filius/tmux/
+        state: directory
+        owner: vagrant  
+        mode: +rwx
+        recurse: yes
+      
+    - name: execute autogen
+      become: true
+      command: chdir=/usr/filius/tmux sh autogen.sh
+    
+    - name: COmmnad
+      command: chdir=/usr/filius/tmux autoreconf -i --force
+    
+    - name: make
+      command: chdir=/usr/filius/tmux ./configure
+
+    - name: install
+      command: chdir=/usr/filius/tmux make
+    
+    - name: Makeinstall
+      become: true
+      command: chdir=/usr/filius/tmux make install
+
+  

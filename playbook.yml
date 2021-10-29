@@ -1,0 +1,93 @@
+---
+- name: Install MiniConda in ubuntu
+  hosts: all
+  vars: 
+    miniconda_executable: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    sha_hash: 1ea2f885b4dbc3098662845560bc64271eb17085387a70c2ba3f29fff6f8d52f
+    download_dir: "/tmp/"
+
+  pre_tasks:
+    - name: Update ubuntu cache
+      apt:
+        update_cache: true
+        cache_valid_time: 7200
+
+  tasks:
+    - name: Install Miniconda
+      block: 
+        - name: Download Miniconda    # We use "-" when there will be multiple items of same thing 
+                                      # like there will be many taks in block but we wont use it under
+                                      # get_url bcs they are parameters not part of list
+                                      
+          get_url:
+            url: "{{ miniconda_executable }}"
+            dest: "{{ download_dir }}install-miniconda.sh"    # It is better to install in tmp folder so that we can remove later
+            checksum : sha256:{{ sha_hash }}    # sha256 is compulsory to check which method we are using like sha or md5
+            mode: 0550       # Gives read and execute permissions to user and group but not others 
+        
+        - name: Create folder for Conda
+          become: True    # We need root permissions to do this task
+          file:
+            path: "/miniconda3"
+            state: directory
+            owner: vagrant
+            
+            mode: 755     # 755 means read and execute access for everyone and also write access for the owner of the file.
+            recurse: yes  # This will recurse the permssions to all contents of directory
+
+        
+        - name: Execute the Installer
+          shell:  "{{ download_dir }}install-miniconda.sh -b -u -p /miniconda3"    # Search for headless installation to understand this
+
+        - name: Remove Sh file from dir
+          file:
+            state: absent
+            path: "{{ download_dir }}install-miniconda.sh"
+
+        - name: Adding to Path
+          become: True
+          shell: echo 'export PATH=/miniconda3/bin:$PATH' >> /etc/profile
+
+        - name: Changing Permissions for miniconda3 to read,execute
+          become: True
+          file:
+            path: /miniconda3
+            mode: +r
+            recurse: yes
+        - name: conda - execution permission for all
+          become: True
+          file:
+            path: /miniconda3/bin
+            mode: +x
+            recurse: yes
+
+
+    - name: Install RUST    
+      block:
+      - name: install curl
+        apt:
+          name: curl
+          state: latest
+
+      - name: Download Rust
+        # become: true
+        shell: curl https://sh.rustup.rs > /tmp/install-rust.sh 
+
+      - name: Make sh file Executable
+        # become: true
+        become_user: root
+        file:
+          path: /tmp/install-rust.sh
+          mode: +x
+
+      - name: Install Rust
+        # become: true
+        become_user: vagrant
+        command: sh /tmp/install-rust.sh -y 
+      
+      - name: Remove sh file
+        file:
+          path: /tmp/install-rust.sh
+          state: absent
+
+    
