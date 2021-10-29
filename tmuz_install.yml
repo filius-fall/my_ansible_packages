@@ -1,6 +1,6 @@
 ---
 - name: TMUX Installation
-  hosts: test_2
+  hosts: <hosts-you-want-to-install-on>
   vars:
     github_url: https://github.com/tmux/tmux.git
 
@@ -26,12 +26,8 @@
         clone: yes
         force: yes
       
-    # - name: change DIR to tmux
-    #   shell:
-    #     chdir: /usr/filius/tmux
     - name: make execcutable file
-      # become: True
-      # becomoe_user: root
+    
       file:
         path: /usr/filius/tmux/
         state: directory

@@ -1,6 +1,6 @@
 ---
 - name: Install RUST in ubuntu
-  hosts: test_app
+  hosts: <hosts-you-want-to-install-on>
   vars:
     go_shar_key: "2255eb3e4e824dd7d5fcdc2e7f84534371c186312e546fb1086a34c17752f431"
     go_download_link: "https://golang.org/dl/go1.17.2.linux-amd64.tar.gz"

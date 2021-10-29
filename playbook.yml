@@ -1,6 +1,6 @@
 ---
 - name: Install MiniConda in ubuntu
-  hosts: all
+  hosts: <hosts-you-want-to-install-on>
   vars: 
     miniconda_executable: "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
     sha_hash: 1ea2f885b4dbc3098662845560bc64271eb17085387a70c2ba3f29fff6f8d52f

@@ -1,18 +1,9 @@
 ---
 
 - name: Install NVM
-  hosts: test_2
+  hosts: <hosts-you-want-to-install-on>
 
   tasks:
-    # - name: Install dependecies
-    #   apt:
-    #     - build-essential
-    #     - libssl-dev
-    
-    # - name: Install nvm
-    #     command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-    #     args:
-    #       creates: "/.nvm/nvm"
 
     - name: Install NVM    
       block:

@@ -1,0 +1,4 @@
+*.sh
+inventory
+vars.yml
+.vagrant/

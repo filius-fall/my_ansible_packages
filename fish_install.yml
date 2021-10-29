@@ -1,5 +1,5 @@
 - name: Insttall fish
-  hosts: test_app
+  hosts: <hosts-you-want-to-install-on>
 
   tasks:
     - name: Download deb file
